@@ -1,0 +1,27 @@
+.score-card {
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.score-card:hover {
+  transform: translateY(-6px);
+}
+
+.score-icon {
+  font-size: 38px;
+}
+
+.score-card h3 {
+  margin: 15px 0;
+  color: #666;
+}
+
+.score-card h1 {
+  font-size: 42px;
+  margin: 0;
+}
