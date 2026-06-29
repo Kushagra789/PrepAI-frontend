@@ -48,6 +48,7 @@ function App() {
     doc.text("PrepAI Resume Report", 20, 20);
 
     doc.setFont("helvetica", "normal");
+
     doc.text(`Name: ${result?.candidate_name || ""}`, 20, 40);
     doc.text(`Resume Score: ${result?.score?.resume_score || 0}/100`, 20, 50);
     doc.text(`ATS Score: ${result?.ats_score?.ATS_score || 0}/100`, 20, 60);
@@ -84,7 +85,6 @@ function App() {
         <div className="dashboard">
 
           <div className="dashboard-grid">
-
             <div className="card blue">
               <h3>📊 Resume Score</h3>
               <h1>{result?.score?.resume_score}/100</h1>
@@ -104,7 +104,6 @@ function App() {
               <h3>📂 Projects</h3>
               <h1>{result?.projects?.length}</h1>
             </div>
-
           </div>
 
           <button onClick={downloadPDF}>
