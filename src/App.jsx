@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
+import { extractTextFromPDF } from "./ocr";
 import "./App.css";
 
 function App() {
@@ -11,20 +12,26 @@ function App() {
   const uploadResume = async () => {
     if (!file) return alert("Please select a resume");
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
       setLoading(true);
 
+      // Extract text using OCR in browser
+      const extractedText = await extractTextFromPDF(file);
+
+      console.log("Extracted Text:");
+      console.log(extractedText);
+
+      // Send extracted text to backend
       const res = await axios.post(
         "https://prepai-backend-7hr4.onrender.com/upload-resume/",
-        formData
+        {
+          text: extractedText,
+        }
       );
 
       setResult(res.data);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       alert("Backend connection failed");
     } finally {
       setLoading(false);
