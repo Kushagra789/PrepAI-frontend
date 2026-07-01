@@ -1,5 +1,6 @@
 import * as pdfjsLib from "pdfjs-dist";
 import { createWorker } from "tesseract.js";
+import { cleanExtractedText } from "./textCleaner";
 
 // PDF worker setup
 pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -11,24 +12,24 @@ export async function extractTextFromPDF(file) {
 
   let text = "";
 
-  // Create ONE worker (important optimization)
+  // Create ONE worker
   const worker = await createWorker("eng");
 
   try {
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
 
-      // 1. Extract embedded text first
+      // Try extracting embedded text
       const content = await page.getTextContent();
       const pageText = content.items.map((item) => item.str).join(" ");
 
-      // If good text exists, use it
+      // If enough embedded text exists, use it
       if (pageText.trim().length > 30) {
-        text += pageText + "\n";
+        text += cleanExtractedText(pageText) + "\n";
         continue;
       }
 
-      // 2. OCR fallback (scanned PDF)
+      // OCR fallback
       const viewport = page.getViewport({ scale: 2 });
 
       const canvas = document.createElement("canvas");
@@ -46,7 +47,7 @@ export async function extractTextFromPDF(file) {
         data: { text: ocrText },
       } = await worker.recognize(canvas);
 
-      text += ocrText + "\n";
+      text += cleanExtractedText(ocrText) + "\n";
     }
   } catch (error) {
     console.error("PDF OCR Error:", error);
@@ -54,5 +55,5 @@ export async function extractTextFromPDF(file) {
     await worker.terminate();
   }
 
-  return text;
+  return cleanExtractedText(text);
 }
